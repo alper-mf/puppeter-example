@@ -1,7 +1,9 @@
 const puppeteer = require("puppeteer");
-const expectResult = 'Kullanıcı Tanımlama';
-
 var fs = require('fs');
+const https = require('https');
+
+
+
 const cookie = JSON.parse(fs.readFileSync("./cookies/cookie.json", "utf8"));
 
 (async () => {
@@ -10,11 +12,17 @@ const cookie = JSON.parse(fs.readFileSync("./cookies/cookie.json", "utf8"));
     //Headless mode için değer belirtilmezse varsayılan olarak true değeri ile işlem yapar.
     const browser = await puppeteer.launch(
         {
-            "headless": false,
-            "slowMo": 25
-        });
+            headless: false,
+            executablePath: '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+            args: ['--flag-switches-begin --flag-switches-end']
 
-    const url = 'https://bum.baskentkariyer.com.tr/gecmis-dersler?t=ap&g=106&page=4' ;
+        }
+
+
+    );
+
+
+    const url = 'https://bum.baskentkariyer.com.tr/gecmis-dersler?t=ap&g=106&page=4';
 
     //Tarayıcıda yeni sekme açıldı. (Mutlaka yapılması gerekmektedir)
     const page = await browser.newPage();
@@ -36,7 +44,7 @@ const cookie = JSON.parse(fs.readFileSync("./cookies/cookie.json", "utf8"));
 
     //div.col-sm-6.col-md-4.mg-t-20
 
-    let videoList= [];
+    let videoList = [];
 
     let list = await page.evaluate(() => {
         let titleList = Array.from(document.querySelectorAll('h5.text-primary.searchBy'));
@@ -57,68 +65,62 @@ const cookie = JSON.parse(fs.readFileSync("./cookies/cookie.json", "utf8"));
     });
 
     for (let index = 0; index < 1; index++) {
-       await videoList.push({
-            title : list[index],
-            pass : zoomPass[index],
+        await videoList.push({
+            title: list[index],
+            pass: zoomPass[index],
             url: zoomLink[index],
         });
     }
 
 
 
-    async function zoomFunction(index){
+    async function zoomFunction(index) {
         let zoomUrl = videoList[index].url;
         let zoomPass = videoList[index].pass;
-        let zoomVideoTitle = videoList[index].title;
+        let zoomVideoTitle = videoList[index].title + '.mp4';
 
 
         await page.goto(zoomUrl, { waitUntil: 'networkidle0' });
 
 
         await page.type('[name=password]', zoomPass);
-    // await page.type('[id=password]', 'baskent_kariyer');
+        // await page.type('[id=password]', 'baskent_kariyer');
 
-     await Promise.all([
-         await page.click('div.controls.recording-passwd > button.btn.btn-primary.submit'),
-         await page.waitForNavigation(105000),
-     ]);
+        await Promise.all([
+            await page.click('div.controls.recording-passwd > button.btn.btn-primary.submit'),
+            await page.waitForNavigation(105000),
+        ]);
 
-
-     await Promise.all([
-        await page.click('[id=zoom-downloader]'),
-        await page.waitForNavigation(105000),
-    ]);
-
-    let a = Array.from(document.querySelectorAll('a.zoom'));
-    let zoomDownloadLink = a.map(c => c.getAttribute('href'));
-
-    zoomDownloader(zoomDownloadLink);
-
-    }
-
-
-    async function zoomDownloader(url) {
-        const path = require('path');
-    const downloadPath = path.resolve('./download');
-    async function simplefileDownload() {
-        const browser = await puppeteer.launch({
-            headless: false,
+        let zoomDownloadLink = await page.evaluate(() => {
+            let a = Array.from(document.querySelectorAll('video.vjs-tech'));
+            let b = a.map(c => c.getAttribute('src'));
+            return b;
         });
-        
-        const page = await browser.newPage();
-        await page.goto(
-            url, 
-            { waitUntil: 'networkidle2' }
-        );
-        
-        await page._client.send('Page.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: downloadPath 
+
+
+       await download(zoomDownloadLink[0], 'path');
+
+    }
+
+
+    const download = (url, destination) => new Promise((resolve, reject) => {
+        const file = fs.createWriteStream(destination);
+      
+        https.get(url, response => {
+          response.pipe(file);
+      
+          file.on('finish', () => {
+            file.close(resolve(true));
+          });
+        }).on('error', error => {
+          fs.unlink(destination);
+      
+          reject(error.message);
         });
-        await page.click('._2vsJm ')
-    }
-        
-    }
+      });
+
+
+    
 
 
     for (let i = 0; i < videoList.length; i++) {
@@ -127,7 +129,7 @@ const cookie = JSON.parse(fs.readFileSync("./cookies/cookie.json", "utf8"));
 
 
 
-        
+
     }
 
     // let text = '';
@@ -139,6 +141,5 @@ const cookie = JSON.parse(fs.readFileSync("./cookies/cookie.json", "utf8"));
 
 
 
-    await browser.close();
     console.info('Test finish.');
 })();
