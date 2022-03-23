@@ -1,0 +1,30 @@
+[
+    {
+        "domain": "bum.baskentkariyer.com.tr",
+        "expirationDate": 1648078892.682479,
+        "hostOnly": true,
+        "httpOnly": true,
+        "name": "baskentkariyer_session",
+        "path": "/",
+        "sameSite": "lax",
+        "secure": false,
+        "session": false,
+        "storeId": "0",
+        "value": "eyJpdiI6ImNHZTRFdWJhMEM1UFdaYXA1UE5OZWc9PSIsInZhbHVlIjoiSmt0ZnNoQUg4Q0xYK2tQenZFNGZqdHpyZUE0cXlPZGNVZkhabG9hWUFNVXRjQ0d1RkFmYWNDS29aK002YTN6ZWgxL3REZlcwMDFiT0srVEk0dzdRLzJhaUpUQ29qYnJvbDNlM213MXhEaUVrc2hFaW81UGVWY2tzenNQZGlvZm8iLCJtYWMiOiIwNWM5ZWY4NmZlYzk2Njc5ZDM3ZDBkYjQ2MTFkY2Q4YTUwZmExZjZjNzQ3OGYxOWMxYzA5MTc3NWM1ZGYzMThiIiwidGFnIjoiIn0%3D",
+        "id": 1
+    },
+    {
+        "domain": "bum.baskentkariyer.com.tr",
+        "expirationDate": 1648078892.682384,
+        "hostOnly": true,
+        "httpOnly": false,
+        "name": "XSRF-TOKEN",
+        "path": "/",
+        "sameSite": "lax",
+        "secure": false,
+        "session": false,
+        "storeId": "0",
+        "value": "eyJpdiI6Im9pNkkxTEg4L1crT1E2OTBSTG5CZ3c9PSIsInZhbHVlIjoiTGNDTjlOWUxYTk44ajRhblp3bEZjMkswcTNGeWhRSEtVRnE3ZEs3Z2dmSDIzWGIzWHBoOFd0S3gxVmFVcEo3UmVpUVZiTzk0RkFRVnBpZXJpTzlQTjVXbWJUNm5rSG44RWNhanBKTE5LUHg5bFl6SlJsUm9qcDNSNGtrS2t3eFciLCJtYWMiOiJiNjg4Nzg0ZTQxMTJkOTQwODZhZmUwMDJlNWE3Njc4N2Q4YTI2MTNmNGE3OWFiZWMxZDYzMzhjYzVkMThlMTAzIiwidGFnIjoiIn0%3D",
+        "id": 2
+    }
+    ]
