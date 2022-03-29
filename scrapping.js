@@ -1,12 +1,22 @@
 const puppeteer = require("puppeteer");
-var fs = require('fs');
-const https = require('https');
 
 
+const fetch = require('node-fetch');
+const fs = require('fs');
+
+
+const { DownloaderHelper } = require('node-downloader-helper');
+
+const customArgs = [
+    `--start-maximized`,
+    `--load-extension=${process.env.extdarkreader}`
+];
 
 const cookie = JSON.parse(fs.readFileSync("./cookies/cookie.json", "utf8"));
+const zoomCookie = JSON.parse(fs.readFileSync("./cookies/zoom.json", "utf8"));
 
 (async () => {
+    const paths = '~/Library/Application Support/Microsoft Edge/Default/Extensions/pdadlkbckhinonakkfkdaadceojbekep/8.0_0/';
     console.info('Test start.');
     //Headless mode açık olarak tarayıcı oluşturuldu. 
     //Headless mode için değer belirtilmezse varsayılan olarak true değeri ile işlem yapar.
@@ -14,8 +24,11 @@ const cookie = JSON.parse(fs.readFileSync("./cookies/cookie.json", "utf8"));
         {
             headless: false,
             executablePath: '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
-            args: ['--flag-switches-begin --flag-switches-end']
-
+            args: [
+                `--disable-extensions-except=${paths}`,
+                `--load-extension=${paths}`,
+                '--enable-automation'
+            ]
         }
 
 
@@ -64,8 +77,8 @@ const cookie = JSON.parse(fs.readFileSync("./cookies/cookie.json", "utf8"));
         return zoomPass;
     });
 
-    for (let index = 0; index < 1; index++) {
-        await videoList.push({
+    for (let index = 0; index < 12; index++) {
+        videoList.push({
             title: list[index],
             pass: zoomPass[index],
             url: zoomLink[index],
@@ -96,50 +109,22 @@ const cookie = JSON.parse(fs.readFileSync("./cookies/cookie.json", "utf8"));
             let b = a.map(c => c.getAttribute('src'));
             return b;
         });
-
-
-       await download(zoomDownloadLink[0], 'path');
-
     }
 
 
-    const download = (url, destination) => new Promise((resolve, reject) => {
-        const file = fs.createWriteStream(destination);
-      
-        https.get(url, response => {
-          response.pipe(file);
-      
-          file.on('finish', () => {
-            file.close(resolve(true));
-          });
-        }).on('error', error => {
-          fs.unlink(destination);
-      
-          reject(error.message);
-        });
-      });
 
 
-    
+
+
 
 
     for (let i = 0; i < videoList.length; i++) {
-
         await zoomFunction(i);
-
-
-
-
+       // console.log(videoList[i]['title'])
     }
-
-    // let text = '';
-    // await page.evaluate(() => {
-    //     const el = document.getElementsByClassName('text-primary searchBy');
-    //     text = el.textContent;
-    // })
-    // console.log(text);
 
 
 
     console.info('Test finish.');
+    //browser.close();
 })();
