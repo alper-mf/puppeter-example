@@ -6,15 +6,13 @@ const puppeteer = require("puppeteer");
 const url = 'https://airdrops.io';
 
 
-
 (async () => {
 
     console.info('Test started.');
 
     const browser = await puppeteer.launch({
-        headless: false, // for test disable the headlels mode,
-        //   args: ['--headless'], // headless but GPU enable
-        // userDataDir: "/home/anto/Downloads/MyChromeDir"
+        headless: false, // Botu çalıştırırken chrome un açılıp açılmayacağının kontrolü.
+
     });
 
     //Tarayıcıda yeni sekme açıldı. (Mutlaka yapılması gerekmektedir)
@@ -25,6 +23,8 @@ const url = 'https://airdrops.io';
 
     //Adrese git
     await page.goto(url, { waitUntil: 'networkidle0' });
+
+
 
     //scrraping işleminin yapılacağı fonksiyon
     async function scrappingCard() {
@@ -43,8 +43,9 @@ const url = 'https://airdrops.io';
                     ///Çekilen listeyi list'e ata.
                     for (let index = 0; index < cards.length; index++) {
                         list.push(
-                            { title: cards[index].textContent, 
-                            url: cards[index].baseURI,
+                            {
+                                title: cards[index].textContent,
+                                url: cards[index].baseURI,
                             }
                         );
                     }
