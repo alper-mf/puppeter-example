@@ -1,11 +1,10 @@
 const puppeteer = require("puppeteer");
 
-
 const fetch = require('node-fetch');
 const fs = require('fs');
+var ncp = require("copy-paste");
 
 
-const { DownloaderHelper } = require('node-downloader-helper');
 
 const customArgs = [
     `--start-maximized`,
@@ -13,7 +12,6 @@ const customArgs = [
 ];
 
 const cookie = JSON.parse(fs.readFileSync("./cookies/cookie.json", "utf8"));
-const zoomCookie = JSON.parse(fs.readFileSync("./cookies/zoom.json", "utf8"));
 
 (async () => {
     const paths = '~/Library/Application Support/Microsoft Edge/Default/Extensions/pdadlkbckhinonakkfkdaadceojbekep/8.0_0/';
@@ -35,7 +33,7 @@ const zoomCookie = JSON.parse(fs.readFileSync("./cookies/zoom.json", "utf8"));
     );
 
 
-    const url = 'https://bum.baskentkariyer.com.tr/gecmis-dersler?t=ap&g=106&page=4';
+    const url = 'https://www.linkedin.com/search/results/people/?keywords=flutter%20developer&origin=CLUSTER_EXPANSION&page=1&sid=BvG';
 
     //Tarayıcıda yeni sekme açıldı. (Mutlaka yapılması gerekmektedir)
     const page = await browser.newPage();
@@ -60,7 +58,7 @@ const zoomCookie = JSON.parse(fs.readFileSync("./cookies/zoom.json", "utf8"));
     let videoList = [];
 
     let list = await page.evaluate(() => {
-        let titleList = Array.from(document.querySelectorAll('h5.text-primary.searchBy'));
+        let titleList = Array.from(document.querySelectorAll('reusable-search__result-container .mb1.'));
         let titles = titleList.map(c => c.textContent);
         return titles;
     });
@@ -87,41 +85,53 @@ const zoomCookie = JSON.parse(fs.readFileSync("./cookies/zoom.json", "utf8"));
 
 
 
+
+
     async function zoomFunction(index) {
         let zoomUrl = videoList[index].url;
         let zoomPass = videoList[index].pass;
         let zoomVideoTitle = videoList[index].title + '.mp4';
 
-
-        await page.goto(zoomUrl, { waitUntil: 'networkidle0' });
+        
+        await page.goto(zoomUrl );
 
 
         await page.type('[name=password]', zoomPass);
-        // await page.type('[id=password]', 'baskent_kariyer');
-
+        let options = {button : 'middle'};
         await Promise.all([
-            await page.click('div.controls.recording-passwd > button.btn.btn-primary.submit'),
-            await page.waitForNavigation(105000),
+           
+            await page.click('div.controls.recording-passwd > button.btn.btn-primary.submit', { waitUntil: 'networkidle0' }) ,
+            
         ]);
+        
+        // let zoomDownloadLink = await page.evaluate(() => {
+        //     let a = Array.from(document.querySelectorAll('video.vjs-tech'));
+        //     let b = a.map(c => c.getAttribute('src'));
+        //     return b;
+        // });
+        //page.setDefaultNavigationTimeout(0); 
 
-        let zoomDownloadLink = await page.evaluate(() => {
-            let a = Array.from(document.querySelectorAll('video.vjs-tech'));
-            let b = a.map(c => c.getAttribute('src'));
-            return b;
-        });
     }
 
 
 
-
+    function sleep(ms) {
+        return new Promise((resolve) => {
+          setTimeout(resolve, ms);
+        });
+      }
 
 
 
 
     for (let i = 0; i < videoList.length; i++) {
+
+        ncp.copy(videoList[i]['title']);
         await zoomFunction(i);
-       // console.log(videoList[i]['title'])
+       // await sleep(25000);
+
     }
+
 
 
 
